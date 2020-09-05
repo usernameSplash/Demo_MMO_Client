@@ -2,6 +2,8 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/master/Unity.gitignore
 #
+
+
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
@@ -98,9 +100,9 @@ ExportedObj/
 # ============ #
 
 .DS_Store
-
-.DS_Store?
-
+._.DS_Store
+**/.DS_Store
+**/._.DS_Store
 ._*
 
 .Spotlight-V100

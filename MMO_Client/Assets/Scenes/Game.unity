@@ -131,6 +131,7 @@ GameObject:
   m_Component:
   - component: {fileID: 715066693}
   - component: {fileID: 715066692}
+  - component: {fileID: 715066694}
   m_Layer: 0
   m_Name: hero-idle-front
   m_TagString: Untagged
@@ -202,6 +203,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &715066694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 715066691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c38056cd6b3a438e9828440e4a4bc73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1803659968
 GameObject:
   m_ObjectHideFlags: 0
@@ -482,7 +495,7 @@ PrefabInstance:
     - target: {fileID: 8499004318113062351, guid: d9c8e93278fc241dbbf1824b34401ea4,
         type: 3}
       propertyPath: m_TileSpriteArray.Array.data[1].m_RefCount
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8499004318113062351, guid: d9c8e93278fc241dbbf1824b34401ea4,
         type: 3}
@@ -529,6 +542,27 @@ PrefabInstance:
       propertyPath: m_TileSpriteArray.Array.data[10].m_RefCount
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 8499004318113062351, guid: d9c8e93278fc241dbbf1824b34401ea4,
+        type: 3}
+      propertyPath: m_Tiles.Array.data[346].second.m_TileSpriteIndex
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 8499004318113062351, guid: d9c8e93278fc241dbbf1824b34401ea4,
+        type: 3}
+      propertyPath: m_TileSpriteArray.Array.data[1].m_Data
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8499004318113062351, guid: d9c8e93278fc241dbbf1824b34401ea4,
+        type: 3}
+      propertyPath: m_TileSpriteArray.Array.data[15].m_RefCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8499004318113062351, guid: d9c8e93278fc241dbbf1824b34401ea4,
+        type: 3}
+      propertyPath: m_TileSpriteArray.Array.data[15].m_Data
+      value: 
+      objectReference: {fileID: 21300034, guid: 61bda409e13a345bcb9e55db18b42f74,
+        type: 3}
     - target: {fileID: 8499004318596911647, guid: d9c8e93278fc241dbbf1824b34401ea4,
         type: 3}
       propertyPath: m_IsActive

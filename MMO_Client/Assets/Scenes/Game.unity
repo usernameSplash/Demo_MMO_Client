@@ -132,8 +132,9 @@ GameObject:
   - component: {fileID: 715066693}
   - component: {fileID: 715066692}
   - component: {fileID: 715066694}
+  - component: {fileID: 715066695}
   m_Layer: 0
-  m_Name: hero-idle-front
+  m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -216,6 +217,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _grid: {fileID: 863738404}
+--- !u!95 &715066695
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 715066691}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d19c056a5a60942a298b87a0b5150b82, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!156049354 &863738404 stripped
 Grid:
   m_CorrespondingSourceObject: {fileID: 8499004318055664225, guid: d9c8e93278fc241dbbf1824b34401ea4,

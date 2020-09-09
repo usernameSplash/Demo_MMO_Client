@@ -20,13 +20,19 @@ public class MapEditor : MonoBehaviour
 
         foreach (GameObject go in gameObjects)
         {
+            Tilemap tmBase = Util.FindChild<Tilemap>(go, "Tilemap_Base", true);
             Tilemap tm = Util.FindChild<Tilemap>(go, "Tilemap_Collision", true);
 
             using (var writer = File.CreateText($"Assets/Resources/Map/{go.name}.txt"))
             {
-                for (int y = tm.cellBounds.yMax - 1; y >= tm.cellBounds.yMin; y--)
+                writer.WriteLine(tmBase.cellBounds.xMin);
+                writer.WriteLine(tmBase.cellBounds.xMax);
+                writer.WriteLine(tmBase.cellBounds.yMin);
+                writer.WriteLine(tmBase.cellBounds.yMax);
+
+                for (int y = tmBase.cellBounds.yMax - 1; y >= tmBase.cellBounds.yMin; y--)
                 {
-                    for (int x = tm.cellBounds.xMin; x <= tm.cellBounds.xMax - 1; x++)
+                    for (int x = tmBase.cellBounds.xMin; x <= tmBase.cellBounds.xMax - 1; x++)
                     {
                         TileBase tile = tm.GetTile(new Vector3Int(x, y, 0));
                         if (tile != null)

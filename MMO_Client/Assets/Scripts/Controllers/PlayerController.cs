@@ -5,7 +5,6 @@ using static Define;
 
 public class PlayerController : MonoBehaviour
 {
-    public Grid _grid;
     float _speed = 5.0f;
 
     Vector3Int _cellPos = Vector3Int.zero;
@@ -16,14 +15,10 @@ public class PlayerController : MonoBehaviour
         get { return _moveDir; }
         set
         {
-            if (_moveDir == value)
-            {
-                return;
-            }
-            if (_isMoving == true)
-            {
-                return;
-            }
+            if (_moveDir == value) return;
+
+            if (_isMoving == true) return;
+
             switch (value)
             {
                 //Walking Animation
@@ -80,7 +75,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         _animator = gameObject.GetComponent<Animator>();
-        Vector3 pos = _grid.CellToWorld(_cellPos) + new Vector3(0.5f, 0.0f);
+        Vector3 pos = Managers.Map.CurrentGrid.CellToWorld(_cellPos) + new Vector3(0.5f, 0.0f);
         transform.position = pos;
     }
 
@@ -92,6 +87,11 @@ public class PlayerController : MonoBehaviour
         UpdatePosition();
     }
 
+    private void LateUpdate()
+    {
+        Camera.main.transform.position = transform.position - new Vector3(0.0f, 0.0f, 10.0f);
+    }
+
     //
     // Summary:
     //     캐릭터가 Grid상에서 한 칸 움직이게 하는 함수
@@ -101,7 +101,7 @@ public class PlayerController : MonoBehaviour
         if (_isMoving == false)
             return;
 
-        Vector3 destPos = _grid.CellToWorld(_cellPos) + new Vector3(0.5f, 0.0f);
+        Vector3 destPos = Managers.Map.CurrentGrid.CellToWorld(_cellPos) + new Vector3(0.5f, 0.0f);
         Vector3 moveDir = destPos - transform.position;
 
         float dist = moveDir.magnitude;
@@ -124,26 +124,29 @@ public class PlayerController : MonoBehaviour
     //     캐릭터 객체가 이동할 Grid 목표 위치 좌표
     void UpdateMovingStatus()
     {
-        if (!_isMoving)
+        if (!_isMoving && _moveDir != MoveDirection.None)
         {
+            Vector3Int destPos = _cellPos;
             switch (Dir)
             {
-                case MoveDirection.None:
-                    break;
                 case MoveDirection.Up:
-                    _cellPos += Vector3Int.up;
+                    destPos += Vector3Int.up;
                     break;
                 case MoveDirection.Down:
-                    _cellPos += Vector3Int.down;
+                    destPos += Vector3Int.down;
                     break;
                 case MoveDirection.Left:
-                    _cellPos += Vector3Int.left;
+                    destPos += Vector3Int.left;
                     break;
                 case MoveDirection.Right:
-                    _cellPos += Vector3Int.right;
+                    destPos += Vector3Int.right;
                     break;
             }
-            _isMoving = true;
+            if (Managers.Map.CanMove(destPos))
+            {
+                _cellPos = destPos;
+                _isMoving = true;
+            }
         }
     }
 
@@ -153,24 +156,22 @@ public class PlayerController : MonoBehaviour
     //     키보드 입력을 통해 캐릭터의 이동방향을 결정하는 함수
     void GetDirectionInput()
     {
-        if (Dir == MoveDirection.None)
+
+        if (Input.GetKey(KeyCode.W))
         {
-            if (Input.GetKey(KeyCode.W))
-            {
-                Dir = MoveDirection.Up;
-            }
-            else if (Input.GetKey(KeyCode.S))
-            {
-                Dir = MoveDirection.Down;
-            }
-            else if (Input.GetKey(KeyCode.A))
-            {
-                Dir = MoveDirection.Left;
-            }
-            else if (Input.GetKey(KeyCode.D))
-            {
-                Dir = MoveDirection.Right;
-            }
+            Dir = MoveDirection.Up;
+        }
+        else if (Input.GetKey(KeyCode.S))
+        {
+            Dir = MoveDirection.Down;
+        }
+        else if (Input.GetKey(KeyCode.A))
+        {
+            Dir = MoveDirection.Left;
+        }
+        else if (Input.GetKey(KeyCode.D))
+        {
+            Dir = MoveDirection.Right;
         }
         else
         {

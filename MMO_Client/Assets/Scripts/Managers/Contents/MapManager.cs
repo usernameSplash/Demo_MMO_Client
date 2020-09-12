@@ -62,7 +62,6 @@ public class MapManager
         for (int y = 0; y < yCount; y++)
         {
             string line = reader.ReadLine();
-            Debug.Log(line.Length);
             for (int x = 0; x < xCount; x++)
             {
                 _collision[y, x] = (line[x] == '1' ? true : false);

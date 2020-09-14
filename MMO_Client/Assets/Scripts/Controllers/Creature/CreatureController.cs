@@ -10,7 +10,6 @@ public class CreatureController : MonoBehaviour
     public Vector3Int CellPos { get; set; } = Vector3Int.zero;
     protected Animator _animator;
     protected SpriteRenderer _sprite;
-
     CreatureState _state = CreatureState.Idle;
     public CreatureState State
     {
@@ -25,8 +24,8 @@ public class CreatureController : MonoBehaviour
         }
     }
 
-    MoveDirection _lastDir = MoveDirection.None;
-    MoveDirection _moveDir = MoveDirection.None;
+    MoveDirection _lastDir = MoveDirection.Down; // 최근에 이동한 방향
+    MoveDirection _moveDir = MoveDirection.Down; // 현재 이동 방향
     protected MoveDirection Dir
     {
         get { return _moveDir; }
@@ -44,12 +43,34 @@ public class CreatureController : MonoBehaviour
         }
     }
 
+    public Vector3Int GetFrontCellPos()
+    {
+        Vector3Int cellPos = CellPos;
+
+        switch (_lastDir)
+        {
+            case MoveDirection.Up:
+                cellPos += Vector3Int.up;
+                break;
+            case MoveDirection.Down:
+                cellPos += Vector3Int.down;
+                break;
+            case MoveDirection.Left:
+                cellPos += Vector3Int.left;
+                break;
+            case MoveDirection.Right:
+                cellPos += Vector3Int.right;
+                break;
+        }
+
+        return cellPos;
+    }
+
     protected virtual void UpdateAnimation()
     {
         //만약 State, Dir의 set이 호출되면 애니메이션 수정
         if (_state == CreatureState.Idle)
         {
-            //키보드를 뗀 상황일때만 Idle 애니메이션 Play.
             if (_moveDir != MoveDirection.None)
             {
                 return;
@@ -92,7 +113,7 @@ public class CreatureController : MonoBehaviour
                     break;
                 case MoveDirection.Left:
                     _animator.Play("WALK_RIGHT");
-                    //The player moves to the left, must be flipped horizontally.
+                    //The player looks the left, must be flipped horizontally.
                     _sprite.flipX = true;
                     break;
                 case MoveDirection.Right:
@@ -103,7 +124,28 @@ public class CreatureController : MonoBehaviour
         }
         else if (_state == CreatureState.Skill)
         {
-            //To do
+            //공격할 땐 _lastDir로 해야 한다.
+            switch (_lastDir)
+            {
+                //Skill Animation
+                case MoveDirection.Up:
+                    _animator.Play("ATTACK_BACK");
+                    _sprite.flipX = false;
+                    break;
+                case MoveDirection.Down:
+                    _animator.Play("ATTACK_FRONT");
+                    _sprite.flipX = false;
+                    break;
+                case MoveDirection.Left:
+                    _animator.Play("ATTACK_RIGHT");
+                    //The player looks the left, must be flipped horizontally.
+                    _sprite.flipX = true;
+                    break;
+                case MoveDirection.Right:
+                    _animator.Play("ATTACK_RIGHT");
+                    _sprite.flipX = false;
+                    break;
+            }
         }
         else if (_state == CreatureState.Dead)
         {
@@ -121,8 +163,21 @@ public class CreatureController : MonoBehaviour
 
     protected virtual void UpdateController()
     {
-        UpdateMovingStatus();
-        UpdatePosition();
+        switch (State)
+        {
+            case CreatureState.Idle:
+                UpdateIdle();
+                break;
+            case CreatureState.Moving:
+                UpdateMoving();
+                break;
+            case CreatureState.Skill:
+                UpdateSkill();
+                break;
+            case CreatureState.Dead:
+                UpdateDead();
+                break;
+        }
     }
 
     void Start()
@@ -135,38 +190,11 @@ public class CreatureController : MonoBehaviour
         UpdateController();
     }
 
-    //
-    // Summary:
-    //     캐릭터가 Grid상에서 한 칸 움직이게 하는 함수
-    //     destPos : 캐릭터 스프라이트가 표시될 위치
-    void UpdatePosition()
-    {
-        if (State != CreatureState.Moving)
-            return;
-
-        Vector3 destPos = Managers.Map.CurrentGrid.CellToWorld(CellPos) + new Vector3(0.5f, 0.0f);
-        Vector3 moveDir = destPos - transform.position;
-
-        float dist = moveDir.magnitude;
-
-        if (dist < _speed * Time.deltaTime)
-        {
-            transform.position = destPos;
-
-            State = CreatureState.Idle;
-        }
-        else
-        {
-            transform.position += moveDir.normalized * _speed * Time.deltaTime;
-            State = CreatureState.Moving;
-        }
-
-    }
 
     // Summary:
-    //     이동 가능한 상태일 때 실제 좌표를 이동
+    //     이동 가능한 상태일 때(Idle일 때) 실제 좌표를 이동
     //     캐릭터 객체가 이동할 Grid 목표 위치 좌표
-    void UpdateMovingStatus()
+    protected virtual void UpdateIdle()
     {
         if (State == CreatureState.Idle && _moveDir != MoveDirection.None)
         {
@@ -197,4 +225,35 @@ public class CreatureController : MonoBehaviour
             }
         }
     }
+
+
+    //
+    // Summary:
+    //     캐릭터가 Grid상에서 한 칸 움직이게 하는 함수
+    //     destPos : 캐릭터 스프라이트가 표시될 위치
+    protected virtual void UpdateMoving()
+    {
+        Vector3 destPos = Managers.Map.CurrentGrid.CellToWorld(CellPos) + new Vector3(0.5f, 0.0f);
+        Vector3 moveDir = destPos - transform.position;
+
+        float dist = moveDir.magnitude;
+
+        if (dist < _speed * Time.deltaTime)
+        {
+            transform.position = destPos;
+
+            State = CreatureState.Idle;
+        }
+        else
+        {
+            transform.position += moveDir.normalized * _speed * Time.deltaTime;
+            State = CreatureState.Moving;
+        }
+
+    }
+
+    protected virtual void UpdateSkill() { }
+    protected virtual void UpdateDead() { }
 }
+
+

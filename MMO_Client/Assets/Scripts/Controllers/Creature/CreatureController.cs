@@ -7,7 +7,7 @@ public class CreatureController : MonoBehaviour
 {
     public float _speed = 5.0f;
 
-    protected Vector3Int _cellPos = Vector3Int.zero;
+    public Vector3Int CellPos { get; set; } = Vector3Int.zero;
     protected Animator _animator;
     protected SpriteRenderer _sprite;
 
@@ -59,20 +59,20 @@ public class CreatureController : MonoBehaviour
             {
                 case MoveDirection.Up:
                     _animator.Play("IDLE_BACK");
-                    _sprite.flipX = true;
+                    _sprite.flipX = false;
                     break;
                 case MoveDirection.Down:
                     _animator.Play("IDLE_FRONT");
-                    _sprite.flipX = true;
+                    _sprite.flipX = false;
                     break;
                 case MoveDirection.Left:
                     _animator.Play("IDLE_RIGHT");
                     //The player looks the left, must be flipped horizontally.
-                    _sprite.flipX = false;
+                    _sprite.flipX = true;
                     break;
                 case MoveDirection.Right:
                     _animator.Play("IDLE_RIGHT");
-                    _sprite.flipX = true;
+                    _sprite.flipX = false;
                     break;
             }
         }
@@ -84,20 +84,20 @@ public class CreatureController : MonoBehaviour
                 //Walking Animation
                 case MoveDirection.Up:
                     _animator.Play("WALK_BACK");
-                    _sprite.flipX = true;
+                    _sprite.flipX = false;
                     break;
                 case MoveDirection.Down:
                     _animator.Play("WALK_FRONT");
-                    _sprite.flipX = true;
+                    _sprite.flipX = false;
                     break;
                 case MoveDirection.Left:
                     _animator.Play("WALK_RIGHT");
                     //The player moves to the left, must be flipped horizontally.
-                    _sprite.flipX = false;
+                    _sprite.flipX = true;
                     break;
                 case MoveDirection.Right:
                     _animator.Play("WALK_RIGHT");
-                    _sprite.flipX = true;
+                    _sprite.flipX = false;
                     break;
             }
         }
@@ -115,7 +115,7 @@ public class CreatureController : MonoBehaviour
     {
         _animator = gameObject.GetComponent<Animator>();
         _sprite = gameObject.GetComponent<SpriteRenderer>();
-        Vector3 pos = Managers.Map.CurrentGrid.CellToWorld(_cellPos) + new Vector3(0.5f, 0.0f);
+        Vector3 pos = Managers.Map.CurrentGrid.CellToWorld(CellPos) + new Vector3(0.5f, 0.0f);
         transform.position = pos;
     }
 
@@ -144,7 +144,7 @@ public class CreatureController : MonoBehaviour
         if (State != CreatureState.Moving)
             return;
 
-        Vector3 destPos = Managers.Map.CurrentGrid.CellToWorld(_cellPos) + new Vector3(0.5f, 0.0f);
+        Vector3 destPos = Managers.Map.CurrentGrid.CellToWorld(CellPos) + new Vector3(0.5f, 0.0f);
         Vector3 moveDir = destPos - transform.position;
 
         float dist = moveDir.magnitude;
@@ -170,7 +170,7 @@ public class CreatureController : MonoBehaviour
     {
         if (State == CreatureState.Idle && _moveDir != MoveDirection.None)
         {
-            Vector3Int destPos = _cellPos;
+            Vector3Int destPos = CellPos;
             switch (Dir)
             {
                 case MoveDirection.Up:
@@ -186,10 +186,14 @@ public class CreatureController : MonoBehaviour
                     destPos += Vector3Int.right;
                     break;
             }
+
+            State = CreatureState.Moving;
             if (Managers.Map.CanMove(destPos))
             {
-                _cellPos = destPos;
-                State = CreatureState.Moving;
+                if (Managers.Object.Find(destPos) == null)
+                {
+                    CellPos = destPos;
+                }
             }
         }
     }

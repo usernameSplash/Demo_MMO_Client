@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static Define;
 
-public class CreatureController : MonoBehaviour
+public abstract class CreatureController : MonoBehaviour
 {
     public float _speed = 5.0f;
 
@@ -24,9 +24,9 @@ public class CreatureController : MonoBehaviour
         }
     }
 
-    MoveDirection _lastDir = MoveDirection.Down; // 최근에 이동한 방향
-    MoveDirection _moveDir = MoveDirection.Down; // 현재 이동 방향
-    protected MoveDirection Dir
+    protected MoveDirection _lastDir = MoveDirection.Down; // 최근에 이동한 방향
+    protected MoveDirection _moveDir = MoveDirection.Down; // 현재 이동 방향
+    public MoveDirection Dir
     {
         get { return _moveDir; }
         set
@@ -66,92 +66,7 @@ public class CreatureController : MonoBehaviour
         return cellPos;
     }
 
-    protected virtual void UpdateAnimation()
-    {
-        //만약 State, Dir의 set이 호출되면 애니메이션 수정
-        if (_state == CreatureState.Idle)
-        {
-            if (_moveDir != MoveDirection.None)
-            {
-                return;
-            }
-
-            switch (_lastDir)
-            {
-                case MoveDirection.Up:
-                    _animator.Play("IDLE_BACK");
-                    _sprite.flipX = false;
-                    break;
-                case MoveDirection.Down:
-                    _animator.Play("IDLE_FRONT");
-                    _sprite.flipX = false;
-                    break;
-                case MoveDirection.Left:
-                    _animator.Play("IDLE_RIGHT");
-                    //The player looks the left, must be flipped horizontally.
-                    _sprite.flipX = true;
-                    break;
-                case MoveDirection.Right:
-                    _animator.Play("IDLE_RIGHT");
-                    _sprite.flipX = false;
-                    break;
-            }
-        }
-        else if (_state == CreatureState.Moving)
-        {
-
-            switch (_moveDir)
-            {
-                //Walking Animation
-                case MoveDirection.Up:
-                    _animator.Play("WALK_BACK");
-                    _sprite.flipX = false;
-                    break;
-                case MoveDirection.Down:
-                    _animator.Play("WALK_FRONT");
-                    _sprite.flipX = false;
-                    break;
-                case MoveDirection.Left:
-                    _animator.Play("WALK_RIGHT");
-                    //The player looks the left, must be flipped horizontally.
-                    _sprite.flipX = true;
-                    break;
-                case MoveDirection.Right:
-                    _animator.Play("WALK_RIGHT");
-                    _sprite.flipX = false;
-                    break;
-            }
-        }
-        else if (_state == CreatureState.Skill)
-        {
-            //공격할 땐 _lastDir로 해야 한다.
-            switch (_lastDir)
-            {
-                //Skill Animation
-                case MoveDirection.Up:
-                    _animator.Play("ATTACK_BACK");
-                    _sprite.flipX = false;
-                    break;
-                case MoveDirection.Down:
-                    _animator.Play("ATTACK_FRONT");
-                    _sprite.flipX = false;
-                    break;
-                case MoveDirection.Left:
-                    _animator.Play("ATTACK_RIGHT");
-                    //The player looks the left, must be flipped horizontally.
-                    _sprite.flipX = true;
-                    break;
-                case MoveDirection.Right:
-                    _animator.Play("ATTACK_RIGHT");
-                    _sprite.flipX = false;
-                    break;
-            }
-        }
-        else if (_state == CreatureState.Dead)
-        {
-            //Maybe?
-        }
-    }
+    protected abstract void UpdateAnimation();
 
     protected virtual void Init()
     {
@@ -254,6 +169,8 @@ public class CreatureController : MonoBehaviour
 
     protected virtual void UpdateSkill() { }
     protected virtual void UpdateDead() { }
+
+    public virtual void OnDamaged() { }
 }
 
 

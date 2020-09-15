@@ -18,4 +18,16 @@ public class MonsterController : CreatureController
         base.UpdateController();
     }
 
+    protected override void UpdateAnimation() { }
+
+    public override void OnDamaged()
+    {
+        GameObject effect = Managers.Resource.Instantiate("Effect/DeathEffect");
+        effect.transform.position = transform.position;
+        effect.GetComponent<Animator>().Play("DeathEffectStart");
+        GameObject.Destroy(effect, 0.5f);
+
+        Managers.Object.Remove(gameObject);
+        Managers.Resource.Destroy(gameObject);
+    }
 }

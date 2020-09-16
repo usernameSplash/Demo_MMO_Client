@@ -1,5 +1,6 @@
-﻿using System.IO;
+﻿using System;
 using System.Collections;
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,17 +17,25 @@ public class MapManager
 
     public bool CanMove(Vector3Int cellPos)
     {
-        if (cellPos.x < MinX || cellPos.x > MaxX)
-        {
+        if (cellPos.x < MinX || cellPos.x >= MaxX)
             return false;
-        }
-        if (cellPos.y < MinY || cellPos.y > MaxY)
-        {
+        if (cellPos.y < MinY || cellPos.y >= MaxY)
             return false;
-        }
 
         int x = cellPos.x - MinX;
         int y = MaxY - cellPos.y;
+
+        try
+        {
+            bool b = !_collision[y, x];
+        }
+        catch (Exception e)
+        {
+            Debug.Log(_collision.Length);
+            Debug.Log(y);
+
+            Debug.Log(x);
+        }
         return !_collision[y, x];
     }
 

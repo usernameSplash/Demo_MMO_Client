@@ -10,8 +10,8 @@ public abstract class CreatureController : MonoBehaviour
     public Vector3Int CellPos { get; set; } = Vector3Int.zero;
     protected Animator _animator;
     protected SpriteRenderer _sprite;
-    CreatureState _state = CreatureState.Idle;
-    public CreatureState State
+    protected CreatureState _state = CreatureState.Idle;
+    public virtual CreatureState State
     {
         get { return _state; }
         set
@@ -32,8 +32,6 @@ public abstract class CreatureController : MonoBehaviour
         set
         {
             if (_moveDir == value) return;
-
-            if (State == CreatureState.Moving) return;
 
             _moveDir = value;
             if (value != MoveDirection.None)
@@ -106,45 +104,13 @@ public abstract class CreatureController : MonoBehaviour
     }
 
 
-    // Summary:
-    //     이동 가능한 상태일 때(Idle일 때) 실제 좌표를 이동
-    //     캐릭터 객체가 이동할 Grid 목표 위치 좌표
-    protected virtual void UpdateIdle()
-    {
-        if (State == CreatureState.Idle && _moveDir != MoveDirection.None)
-        {
-            Vector3Int destPos = CellPos;
-            switch (Dir)
-            {
-                case MoveDirection.Up:
-                    destPos += Vector3Int.up;
-                    break;
-                case MoveDirection.Down:
-                    destPos += Vector3Int.down;
-                    break;
-                case MoveDirection.Left:
-                    destPos += Vector3Int.left;
-                    break;
-                case MoveDirection.Right:
-                    destPos += Vector3Int.right;
-                    break;
-            }
 
-            State = CreatureState.Moving;
-            if (Managers.Map.CanMove(destPos))
-            {
-                if (Managers.Object.Find(destPos) == null)
-                {
-                    CellPos = destPos;
-                }
-            }
-        }
-    }
+    protected virtual void UpdateIdle() { }
 
 
     //
     // Summary:
-    //     캐릭터가 Grid상에서 한 칸 움직이게 하는 함수
+    //     캐릭터가 Grid상에서 한 칸 스르륵 움직이게 하는 함수
     //     destPos : 캐릭터 스프라이트가 표시될 위치
     protected virtual void UpdateMoving()
     {
@@ -156,8 +122,7 @@ public abstract class CreatureController : MonoBehaviour
         if (dist < _speed * Time.deltaTime)
         {
             transform.position = destPos;
-
-            State = CreatureState.Idle;
+            MoveToNextPos();
         }
         else
         {
@@ -165,6 +130,45 @@ public abstract class CreatureController : MonoBehaviour
             State = CreatureState.Moving;
         }
 
+    }
+
+    // Summary:
+    //     이동 가능한 상태일 때(Idle일 때) 실제 좌표를 이동
+    //     캐릭터 객체가 이동할 Grid 목표 위치 좌표
+    protected virtual void MoveToNextPos()
+    {
+        if (Dir == MoveDirection.None)
+        {
+            State = CreatureState.Idle;
+            return;
+        }
+
+        Vector3Int destPos = CellPos;
+
+        switch (Dir)
+        {
+            case MoveDirection.Up:
+                destPos += Vector3Int.up;
+                break;
+            case MoveDirection.Down:
+                destPos += Vector3Int.down;
+                break;
+            case MoveDirection.Left:
+                destPos += Vector3Int.left;
+                break;
+            case MoveDirection.Right:
+                destPos += Vector3Int.right;
+                break;
+        }
+
+        State = CreatureState.Moving;
+        if (Managers.Map.CanMove(destPos))
+        {
+            if (Managers.Object.Find(destPos) == null)
+            {
+                CellPos = destPos;
+            }
+        }
     }
 
     protected virtual void UpdateSkill() { }

@@ -9,6 +9,7 @@ public class ArrowController : CreatureController
     {
         base.Init();
         _speed = 15.0f;
+        State = CreatureState.Moving;
 
         switch (Dir)
         {
@@ -42,49 +43,46 @@ public class ArrowController : CreatureController
 
     protected override void UpdateAnimation() { }
 
-    protected override void UpdateIdle()
+    protected override void MoveToNextPos()
     {
-        if (State == CreatureState.Idle && _moveDir != MoveDirection.None)
+        Vector3Int destPos = CellPos;
+        switch (Dir)
         {
-            Vector3Int destPos = CellPos;
-            switch (Dir)
-            {
-                case MoveDirection.Up:
-                    destPos += Vector3Int.up;
-                    break;
-                case MoveDirection.Down:
-                    destPos += Vector3Int.down;
-                    break;
-                case MoveDirection.Left:
-                    destPos += Vector3Int.left;
-                    break;
-                case MoveDirection.Right:
-                    destPos += Vector3Int.right;
-                    break;
-            }
+            case MoveDirection.Up:
+                destPos += Vector3Int.up;
+                break;
+            case MoveDirection.Down:
+                destPos += Vector3Int.down;
+                break;
+            case MoveDirection.Left:
+                destPos += Vector3Int.left;
+                break;
+            case MoveDirection.Right:
+                destPos += Vector3Int.right;
+                break;
+        }
 
-            State = CreatureState.Moving;
-            if (Managers.Map.CanMove(destPos))
+        if (Managers.Map.CanMove(destPos))
+        {
+            GameObject go = Managers.Object.Find(destPos);
+            if (go == null)
             {
-                GameObject go = Managers.Object.Find(destPos);
-                if (go == null)
-                {
-                    CellPos = destPos;
-                }
-                else
-                {
-                    Debug.Log(go.name);
-                    CreatureController cc = go.GetComponent<CreatureController>();
-                    if (cc != null)
-                        cc.OnDamaged();
-
-                    Managers.Resource.Destroy(gameObject);
-                }
+                CellPos = destPos;
             }
             else
             {
+                Debug.Log(go.name);
+                CreatureController cc = go.GetComponent<CreatureController>();
+                if (cc != null)
+                    cc.OnDamaged();
+
                 Managers.Resource.Destroy(gameObject);
             }
         }
+        else
+        {
+            Managers.Resource.Destroy(gameObject);
+        }
+
     }
 }

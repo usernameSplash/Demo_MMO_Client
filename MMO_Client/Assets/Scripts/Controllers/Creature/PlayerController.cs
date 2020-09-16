@@ -106,7 +106,6 @@ public class PlayerController : CreatureController
         {
             case CreatureState.Idle:
                 GetDirectionInput();
-                GetIdleInput();
                 break;
             case CreatureState.Moving:
                 GetDirectionInput();
@@ -120,12 +119,29 @@ public class PlayerController : CreatureController
         Camera.main.transform.position = transform.position - new Vector3(0.0f, 0.0f, 10.0f);
     }
 
+    protected override void UpdateIdle()
+    {
+        //이동 상태로 갈 지 확인
+        if (Dir != MoveDirection.None)
+        {
+            State = CreatureState.Moving;
+            return;
+        }
+
+        //스킬 상태로 갈 지 확인
+        if (Input.GetKey(KeyCode.Space))
+        {
+            State = CreatureState.Skill;
+            // _coSkill = StartCoroutine("CoStartPunch");
+            _coSkill = StartCoroutine("CoStartArrow");
+        }
+    }
+
     //
     // Summary:
     //     키보드 입력을 통해 캐릭터의 이동방향을 결정하는 함수
     void GetDirectionInput()
     {
-
         if (Input.GetKey(KeyCode.W))
         {
             Dir = MoveDirection.Up;
@@ -145,16 +161,6 @@ public class PlayerController : CreatureController
         else
         {
             Dir = MoveDirection.None;
-        }
-    }
-
-    void GetIdleInput()
-    {
-        if (Input.GetKey(KeyCode.Space))
-        {
-            State = CreatureState.Skill;
-            // _coSkill = StartCoroutine("CoStartPunch");
-            _coSkill = StartCoroutine("CoStartArrow");
         }
     }
 

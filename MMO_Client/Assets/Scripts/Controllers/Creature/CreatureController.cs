@@ -70,7 +70,7 @@ public abstract class CreatureController : MonoBehaviour
     {
         _animator = gameObject.GetComponent<Animator>();
         _sprite = gameObject.GetComponent<SpriteRenderer>();
-        Vector3 pos = Managers.Map.CurrentGrid.CellToWorld(CellPos) + new Vector3(0.5f, 0.0f);
+        Vector3 pos = Managers.Map.CurrentGrid.CellToWorld(CellPos) + new Vector3(0.5f, 0.5f);
         transform.position = pos;
     }
 
@@ -114,7 +114,7 @@ public abstract class CreatureController : MonoBehaviour
     //     destPos : 캐릭터 스프라이트가 표시될 위치
     protected virtual void UpdateMoving()
     {
-        Vector3 destPos = Managers.Map.CurrentGrid.CellToWorld(CellPos) + new Vector3(0.5f, 0.0f);
+        Vector3 destPos = Managers.Map.CurrentGrid.CellToWorld(CellPos) + new Vector3(0.5f, 0.5f);
         Vector3 moveDir = destPos - transform.position;
 
         float dist = moveDir.magnitude;
@@ -129,7 +129,6 @@ public abstract class CreatureController : MonoBehaviour
             transform.position += moveDir.normalized * _speed * Time.deltaTime;
             State = CreatureState.Moving;
         }
-
     }
 
     // Summary:
@@ -161,7 +160,6 @@ public abstract class CreatureController : MonoBehaviour
                 break;
         }
 
-        State = CreatureState.Moving;
         if (Managers.Map.CanMove(destPos))
         {
             if (Managers.Object.Find(destPos) == null)
